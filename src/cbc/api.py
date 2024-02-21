@@ -6,28 +6,24 @@ import ast
 import requests
 from typing import Optional
 from datetime import datetime
-from newspaper import Article
+from src.cbc.article import CBCArticle
 from helper import fix_url
 from dateutil.parser import parse
 
 def get_date(url):
-    article = Article(url)
-    article.download()
-    article.parse() 
-    title = article.title
-    date = parse(title, fuzzy_with_tokens=True)
-    return date[0]
+    """
+    Look to implement a more reasonable way to filter by date.
+    """
+    article = CBCArticle(url)
+    return article.publish_date
 
-    
 def get_text(url):
     """
     Given a text based article URL return the article text
     """
     try:
-        article = Article(url)
-        article.download()
-        article.parse() 
-    
+        article = CBCArticle(url)
+
         return article.text
     except:
         return ""
@@ -59,7 +55,6 @@ def get_cbc_urls(search_str: str, date: Optional[datetime] = None):
             "https://www.cbc.ca/search_api/v1/search",
             params=params
             )
-
 
         if res.status_code == 200:
             res_list = ast.literal_eval(res.text)

@@ -38,26 +38,5 @@ def parse_headline(text):
         results = [None]
     return results[0]
 
-def parse_date(url) -> str:
-    try:
-        year = url.split("-")[-2]
-        month = url.split("-")[-4]
-        day = url.split("-")[-3]
-        if len(year) == 2:
-            pattern = "%y-%m-%d"
-        elif len(year) == 4:
-            pattern = "%Y-%m-%d"
-        if int(month) > 12:
-            if len(year) == 2:
-                pattern = "%y-%d-%m"
-            if len(year) == 4:
-                pattern = "%Y-%d-%m"
-
-        str_date = f"{year}-{month}-{day}"
-        date = datetime.strptime(str_date, pattern)
-        return date
-    except:
-        return None
-
 def fix_url(url_str: str) -> str:
     return url_str.replace("//", "https://")

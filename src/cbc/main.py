@@ -2,11 +2,9 @@
 Download text from CBC riff the headline articles.
 """
 
-
-import json
 from datetime import datetime
-
-from api import get_cbc_urls, get_text
+from api import get_cbc_urls
+from src.cbc.article import CBCArticle
 from helper import parse_date, parse_headline, parse_songs
 from local import json_load, json_save
 
@@ -23,7 +21,8 @@ def create_data(data_list):
             values.update(
                 {"url": data["url"]}
                 )
-            text = get_text(data["url"])
+            article = CBCArticle(data["url"])
+            text = article.text
             values.update(
                 {"text": text}
                 )
@@ -43,13 +42,13 @@ def create_data(data_list):
             all_data.append(values)
     return all_data
 
-def run():
-    search_str = "Day6 Riffed"
-    date_filter = datetime(year=2023, month=1, day=1)
-    data_dict = get_cbc_urls(search_str, date_filter)
-    dataset = create_data(data_dict)
-    fp = r".\data.json"
-    json_save(fp, dataset)
+class Runner:
+    def __init__(self, date, search_str):
+        self.date = date
+        self.search_str = search_str
 
-if __name__ == "__main__":
-    run()
+    def run(self):
+        data_dict = get_cbc_urls(self.search_str, self.date)
+        dataset = create_data(data_dict)
+        fp = r".\data.json"
+        json_save(fp, dataset)
